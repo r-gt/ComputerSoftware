@@ -52,6 +52,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(TARGET_OS "linux")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(TARGET_OS "mac")
+
 endif()
 
 # -----------------------------------------------------
@@ -379,12 +380,47 @@ endif()
 
 # Extra steps to configure the application on Linux
 if(TARGET_OS STREQUAL "linux")
+
+# -----------------------------------------------------
+#   SET UP CPACK
+# -----------------------------------------------------
+
+    # Force it to be installed in /usr/local
+    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local")
+
+    set(CPACK_INSTALL_PREFIX "/usr/local")
+
+    # set up packages
+    set(CPACK_PACKAGE_NAME "vircon32")
+    set(CPACK_PACKAGE_VERSION "1.0.0")
+    set(CPACK_PACKAGE_VENDOR "Palta")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Official emulator for the Vircon32 console")
+    set(CPACK_PACKAGE_CONTACT "@._palta")
+
+    # Set dependencies and package specific configuration
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "@._palta")
+    set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+
+    
+    set(CPACK_RPM_PACKAGE_AUTOREQ ON)
+    set(CPACK_RPM_PACKAGE_AUTOPROV ON)
+    set(CPACK_RPM_PACKAGE_NAME "vircon32")
+    set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+    set(CPACK_RPM_PACKAGE_GROUP "Amusements/Games")
+
+
+    set(CPACK_GENERATOR "DEB;RPM;TGZ")
+
     # Install desktop entry
     install(FILES Resources/Linux/Vircon32.desktop DESTINATION /usr/share/applications )
 
     # Install icon
     install(FILES Resources/Linux/Vircon32.svg DESTINATION /usr/share/pixmaps )
     install(FILES Resources/Linux/Vircon32.svg DESTINATION /usr/share/icons/hicolor/scalable/apps/ )
+
+    include(CPack)
+
 endif()
     
 # On Linux or Mac we will need to set install permissions
@@ -401,3 +437,5 @@ if(TARGET_OS STREQUAL "linux" OR TARGET_OS STREQUAL "mac")
     install(CODE "execute_process(COMMAND chmod 777 ${CMAKE_INSTALL_PREFIX}/${CMAKE_PROJECT_NAME}/Emulator/Savestates)")
     install(CODE "execute_process(COMMAND chmod 777 ${CMAKE_INSTALL_PREFIX}/${CMAKE_PROJECT_NAME}/Emulator/Screenshots)")
 endif()
+
+
