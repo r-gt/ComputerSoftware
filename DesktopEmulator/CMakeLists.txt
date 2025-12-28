@@ -27,8 +27,8 @@ project("Vircon32" LANGUAGES C CXX)
 
 # Define version
 set(PROJECT_VERSION_MAJOR 25)
-set(PROJECT_VERSION_MINOR 10)
-set(PROJECT_VERSION_PATCH 29)
+set(PROJECT_VERSION_MINOR 12)
+set(PROJECT_VERSION_PATCH 28)
 
 # Set names for final executables
 set(EMULATOR_BINARY_NAME "Vircon32")
@@ -380,49 +380,14 @@ endif()
 
 # Extra steps to configure the application on Linux
 if(TARGET_OS STREQUAL "linux")
-
-# -----------------------------------------------------
-#   SET UP CPACK
-# -----------------------------------------------------
-
-    # Force it to be installed in /usr/local
-    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local")
-
-    set(CPACK_INSTALL_PREFIX "/usr/local")
-
-    # set up packages
-    set(CPACK_PACKAGE_NAME "vircon32")
-    set(CPACK_PACKAGE_VERSION "1.0.0")
-    set(CPACK_PACKAGE_VENDOR "Palta")
-    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Official emulator for the Vircon32 console")
-    set(CPACK_PACKAGE_CONTACT "@._palta")
-
-    # Set dependencies and package specific configuration
-    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "@._palta")
-    set(CPACK_DEBIAN_PACKAGE_SECTION "games")
-
-    
-    set(CPACK_RPM_PACKAGE_AUTOREQ ON)
-    set(CPACK_RPM_PACKAGE_AUTOPROV ON)
-    set(CPACK_RPM_PACKAGE_NAME "vircon32")
-    set(CPACK_RPM_PACKAGE_LICENSE "MIT")
-    set(CPACK_RPM_PACKAGE_GROUP "Amusements/Games")
-
-
-    set(CPACK_GENERATOR "DEB;RPM;TGZ")
-
     # Install desktop entry
     install(FILES Resources/Linux/Vircon32.desktop DESTINATION /usr/share/applications )
 
     # Install icon
     install(FILES Resources/Linux/Vircon32.svg DESTINATION /usr/share/pixmaps )
     install(FILES Resources/Linux/Vircon32.svg DESTINATION /usr/share/icons/hicolor/scalable/apps/ )
-
-    include(CPack)
-
 endif()
-    
+
 # On Linux or Mac we will need to set install permissions
 if(TARGET_OS STREQUAL "linux" OR TARGET_OS STREQUAL "mac")
     # Allow emulator to create the debug log
@@ -438,4 +403,40 @@ if(TARGET_OS STREQUAL "linux" OR TARGET_OS STREQUAL "mac")
     install(CODE "execute_process(COMMAND chmod 777 ${CMAKE_INSTALL_PREFIX}/${CMAKE_PROJECT_NAME}/Emulator/Screenshots)")
 endif()
 
+# -----------------------------------------------------
+#   DEFINE THE PACKAGE CREATION WITH CPACK
+# -----------------------------------------------------
 
+if(TARGET_OS STREQUAL "linux")
+
+    # define install directory
+    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local")
+    set(CPACK_INSTALL_PREFIX "/usr/local")
+
+    # define base package info
+    set(CPACK_PACKAGE_NAME "vircon32-emulator")
+    set(CPACK_PACKAGE_VERSION "25.12.28")
+    set(CPACK_PACKAGE_VENDOR "Carra")
+    set(CPACK_PACKAGE_MAINTAINER "Carra")
+    set(CPACK_PACKAGE_LICENSE "BSD-3-Clause")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Desktop emulator for Vircon32 console")
+    set(CPACK_PACKAGE_DESCRIPTION "This is the official Vircon32 desktop emulator for the Debian Linux family. Vircon32 is an open source, 32-bit virtual game console")
+    set(CPACK_PACKAGE_HOMEPAGE_URL "https://www.vircon32.com")
+    
+    # Set dependencies and package specific configuration
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Carra")
+    set(CPACK_DEBIAN_PACKAGE_SECTION "games")
+
+    set(CPACK_RPM_PACKAGE_AUTOREQ ON)
+    set(CPACK_RPM_PACKAGE_AUTOPROV ON)
+    set(CPACK_RPM_PACKAGE_NAME "vircon32-emulator")
+    set(CPACK_RPM_PACKAGE_LICENSE "BSD-3-Clause")
+    set(CPACK_RPM_PACKAGE_GROUP "Amusements/Games")
+
+    set(CPACK_GENERATOR "DEB;RPM;TGZ")
+
+    # finally this reads all CPack variables
+    include(CPack)
+
+endif()
